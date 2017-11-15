@@ -4,7 +4,7 @@
 
 from collections import defaultdict
 import datetime
-from itertools import izip
+
 import logging
 import re
 import time
@@ -36,7 +36,7 @@ _logger = logging.getLogger(__name__)
 class AutoStruct(object):
 
     def __init__(self, **kwargs):
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(self, k, v)
 
 
@@ -137,7 +137,7 @@ class MisReportKpi(models.Model):
     def name_get(self):
         res = []
         for rec in self:
-            name = u'{} ({})'.format(rec.description, rec.name)
+            name = '{} ({})'.format(rec.description, rec.name)
             res.append((rec.id, name))
         return res
 
@@ -175,7 +175,7 @@ class MisReportKpi(models.Model):
             l = []
             for expression in kpi.expression_ids:
                 if expression.subkpi_id:
-                    l.append(u'{}\xa0=\xa0{}'.format(
+                    l.append('{}\xa0=\xa0{}'.format(
                         expression.subkpi_id.name, expression.name))
                 else:
                     l.append(
@@ -335,7 +335,7 @@ class MisReportKpiExpression(models.Model):
             kpi = rec.kpi_id
             subkpi = rec.subkpi_id
             if subkpi:
-                name = u'{} / {} ({}.{})'.format(
+                name = '{} / {} ({}.{})'.format(
                     kpi.description, subkpi.description,
                     kpi.name, subkpi.name)
             else:
@@ -799,7 +799,7 @@ class MisReport(models.Model):
                 drilldown_args = []
                 name_error = False
                 for expression, replaced_expr in \
-                        izip(expressions, replaced_exprs):
+                        zip(expressions, replaced_exprs):
                     vals.append(mis_safe_eval(replaced_expr, locals_dict))
                     if replaced_expr != expression:
                         drilldown_args.append({

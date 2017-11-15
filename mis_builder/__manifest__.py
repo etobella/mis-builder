@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # © 2014-2017 ACSONE SA/NV (<http://acsone.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
@@ -33,7 +32,7 @@
     'qweb': [
         'static/src/xml/*.xml'
     ],
-    'installable': False,
+    'installable': True,
     'application': True,
     'license': 'AGPL-3',
 }

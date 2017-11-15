@@ -167,7 +167,7 @@ class AccountingNoneType(object):
     def __str__(self):
         return ''
 
-    def __nonzero__(self):
+    def __bool__(self):
         return False
 
     def __bool__(self):

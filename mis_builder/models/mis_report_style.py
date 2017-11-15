@@ -169,14 +169,14 @@ class MisReportKpiStyle(models.Model):
                    divider=1.0, dp=0, prefix=None, suffix=None, sign='-'):
         # format number following user language
         if value is None or value is AccountingNone:
-            return u''
+            return ''
         value = round(value / float(divider or 1), dp or 0) or 0
         r = lang.format('%%%s.%df' % (sign, dp or 0), value, grouping=True)
-        r = r.replace('-', u'\N{NON-BREAKING HYPHEN}')
+        r = r.replace('-', '\N{NON-BREAKING HYPHEN}')
         if prefix:
-            r = prefix + u'\N{NO-BREAK SPACE}' + r
+            r = prefix + '\N{NO-BREAK SPACE}' + r
         if suffix:
-            r = r + u'\N{NO-BREAK SPACE}' + suffix
+            r = r + '\N{NO-BREAK SPACE}' + suffix
         return r
 
     @api.model
@@ -187,8 +187,8 @@ class MisReportKpiStyle(models.Model):
     @api.model
     def render_str(self, lang, value):
         if value is None or value is AccountingNone:
-            return u''
-        return unicode(value)
+            return ''
+        return str(value)
 
     @api.model
     def compare_and_render(self, lang, style_props, type, compare_method,
@@ -242,14 +242,14 @@ class MisReportKpiStyle(models.Model):
 
     @api.model
     def to_xlsx_style(self, props, no_indent=False):
-        num_format = u'0'
+        num_format = '0'
         if props.dp:
-            num_format += u'.'
-            num_format += u'0' * props.dp
+            num_format += '.'
+            num_format += '0' * props.dp
         if props.prefix:
-            num_format = u'"{} "{}'.format(props.prefix, num_format)
+            num_format = '"{} "{}'.format(props.prefix, num_format)
         if props.suffix:
-            num_format = u'{}" {}"'.format(num_format, props.suffix)
+            num_format = '{}" {}"'.format(num_format, props.suffix)
 
         xlsx_attributes = [
             ('italic', props.font_style == 'italic'),

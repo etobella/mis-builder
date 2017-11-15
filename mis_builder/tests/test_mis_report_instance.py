@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2016-2017 ACSONE SA/NV (<http://acsone.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
@@ -166,7 +165,7 @@ class TestMisReportInstance(common.TransactionCase):
             self.env.ref('base.main_company'))
         for account_id in account_ids:
             self.assertTrue(account_id in res)
-            self.assertEquals(res[account_id], kpi200)
+            self.assertEqual(res[account_id], kpi200)
 
     def test_kpi_name_get_name_search(self):
         r = self.env['mis.report.kpi'].name_search('k1')

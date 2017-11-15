@@ -4,7 +4,7 @@
 
 import re
 from collections import defaultdict
-from itertools import izip
+
 
 from odoo import fields
 from odoo.models import expression
@@ -150,7 +150,7 @@ class AccountingExpressionProcessor(object):
     def done_parsing(self):
         """Load account codes and replace account codes by
         account ids in map."""
-        for key, account_codes in self._map_account_ids.items():
+        for key, account_codes in list(self._map_account_ids.items()):
             # TODO _load_account_codes could be done
             # for all account_codes at once (also in v8)
             self._load_account_codes(account_codes)
@@ -215,7 +215,7 @@ class AccountingExpressionProcessor(object):
         # TODO we could do this for more precision:
         #      AND(OR(aml_domains[mode]), date_domain[mode]) for each mode
         return expression.OR(aml_domains) + \
-            expression.OR(date_domain_by_mode.values())
+            expression.OR(list(date_domain_by_mode.values()))
 
     def get_aml_domain_for_dates(self, date_from, date_to,
                                  mode,
@@ -467,4 +467,4 @@ class AccountingExpressionProcessor(object):
         # or leave that to the caller?
         bals = cls._get_balances(cls.MODE_UNALLOCATED, company,
                                  date, date, target_move)
-        return tuple(map(sum, izip(*bals.values())))
+        return tuple(map(sum, zip(*list(bals.values()))))

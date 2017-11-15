@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from collections import defaultdict, OrderedDict
-from itertools import izip
+
 import logging
 
 from odoo import _
@@ -98,7 +98,7 @@ class KpiMatrixCol(object):
         return self._subcols
 
     def iter_cell_tuples(self):
-        return self._cell_tuples_by_row.values()
+        return list(self._cell_tuples_by_row.values())
 
     def get_cell_tuple_for_row(self, row):
         return self._cell_tuples_by_row.get(row)
@@ -233,7 +233,7 @@ class KpiMatrix(object):
         assert len(vals) == col.colspan
         assert len(drilldown_args) == col.colspan
         for val, drilldown_arg, subcol in \
-                izip(vals, drilldown_args, col.iter_subcols()):
+                zip(vals, drilldown_args, col.iter_subcols()):
             if isinstance(val, DataError):
                 val_rendered = val.name
                 val_comment = val.msg
@@ -241,12 +241,12 @@ class KpiMatrix(object):
                 val_rendered = self._style_model.render(
                     self.lang, row.style_props, kpi.type, val)
                 if row.kpi.multi and subcol.subkpi:
-                    val_comment = u'{}.{} = {}'.format(
+                    val_comment = '{}.{} = {}'.format(
                         row.kpi.name,
                         subcol.subkpi.name,
                         row.kpi._get_expression_str_for_subkpi(subcol.subkpi))
                 else:
-                    val_comment = u'{} = {}'.format(
+                    val_comment = '{} = {}'.format(
                         row.kpi.name,
                         row.kpi.expression)
             cell_style_props = row.style_props
@@ -287,7 +287,7 @@ class KpiMatrix(object):
         Invoke this after setting all values.
         """
         for cmpcol_key, (col_key, base_col_key, label, description) in \
-                self._comparison_todo.items():
+                list(self._comparison_todo.items()):
             col = self._cols[col_key]
             base_col = self._cols[base_col_key]
             common_subkpis = self._common_subkpis([col, base_col])
@@ -296,7 +296,7 @@ class KpiMatrix(object):
                                 format(col.description,
                                        base_col.description))
             if not label:
-                label = u'{} vs {}'.\
+                label = '{} vs {}'.\
                     format(col.label, base_col.label)
             comparison_col = KpiMatrixCol(cmpcol_key, label, description, {},
                                           sorted(common_subkpis,
@@ -323,7 +323,7 @@ class KpiMatrix(object):
                                  cell.subcol.subkpi in common_subkpis]
                 comparison_cell_tuple = []
                 for val, base_val, comparison_subcol in \
-                        izip(vals,
+                        zip(vals,
                              base_vals,
                              comparison_col.iter_subcols()):
                     # TODO FIXME average factors
@@ -343,7 +343,7 @@ class KpiMatrix(object):
         Invoke this after setting all values.
         """
         for sumcol_key, (col_to_sum_keys, label, description, sum_accdet) in \
-                self._sum_todo.items():
+                list(self._sum_todo.items()):
             sumcols = [self._cols[k] for (sign, k) in col_to_sum_keys]
             # TODO check all sumcols are resolved; we need a kind of
             #      recompute queue here so we don't depend on insertion
@@ -388,9 +388,9 @@ class KpiMatrix(object):
 
         yields KpiMatrixRow.
         """
-        for kpi_row in self._kpi_rows.values():
+        for kpi_row in list(self._kpi_rows.values()):
             yield kpi_row
-            detail_rows = self._detail_rows[kpi_row.kpi].values()
+            detail_rows = list(self._detail_rows[kpi_row.kpi].values())
             detail_rows = sorted(detail_rows, key=lambda r: r.label)
             for detail_row in detail_rows:
                 yield detail_row
@@ -400,7 +400,7 @@ class KpiMatrix(object):
 
         yields KpiMatrixCol: one for each column or comparison.
         """
-        for col_key, col in self._cols.items():
+        for col_key, col in list(self._cols.items()):
             yield col
 
     def iter_subcols(self):
@@ -415,12 +415,12 @@ class KpiMatrix(object):
 
     def _load_account_names(self):
         account_ids = set()
-        for detail_rows in self._detail_rows.values():
-            account_ids.update(detail_rows.keys())
+        for detail_rows in list(self._detail_rows.values()):
+            account_ids.update(list(detail_rows.keys()))
         accounts = self._account_model.\
             search([('id', 'in', list(account_ids))])
         self._account_names = {
-            a.id: u'{} {}'.format(a.code, a.name)
+            a.id: '{} {}'.format(a.code, a.name)
             for a in accounts
         }
 
